@@ -59,10 +59,10 @@ jobs:
         if: github.event_name != 'pull_request'
         run: |
           mkdir -p mobile/release
-          cp mobile/android/app/build/outputs/apk/release/app-release.apk mobile/release/Acrobatic-Android-0.3.1.apk
-          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose mobile/release/Acrobatic-Android-0.3.1.apk
+          cp mobile/android/app/build/outputs/apk/release/app-release.apk mobile/release/Acrobatic-Android-0.3.2.apk
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose mobile/release/Acrobatic-Android-0.3.2.apk
           cd mobile/release
-          sha256sum Acrobatic-Android-0.3.1.apk > SHA256SUMS.txt
+          sha256sum Acrobatic-Android-0.3.2.apk > SHA256SUMS.txt
       - uses: actions/upload-artifact@v4
         if: github.event_name != 'pull_request'
         with:
@@ -104,11 +104,11 @@ jobs:
       - name: Package iOS sources
         run: |
           mkdir -p mobile/release
-          zip -qr mobile/release/Acrobatic-iOS-source-0.3.1.zip mobile/ios/Acrobatic mobile/ios/AcrobaticTests mobile/ios/AcrobaticUITests mobile/ios/project.yml mobile/shared mobile/README.md
+          zip -qr mobile/release/Acrobatic-iOS-source-0.3.2.zip mobile/ios/Acrobatic mobile/ios/AcrobaticTests mobile/ios/AcrobaticUITests mobile/ios/project.yml mobile/shared mobile/README.md
       - uses: actions/upload-artifact@v4
         with:
           name: Acrobatic-iOS-source
-          path: mobile/release/Acrobatic-iOS-source-0.3.1.zip
+          path: mobile/release/Acrobatic-iOS-source-0.3.2.zip
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -133,4 +133,4 @@ jobs:
       - name: Publish installable Android APK and iOS developer sources
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" release/* --verify-tag --title 'Acrobatic Mobile 0.3.1' --notes-file mobile/RELEASE-NOTES.md
+        run: gh release create "$GITHUB_REF_NAME" release/* --verify-tag --title 'Acrobatic Mobile 0.3.2' --notes-file mobile/RELEASE-NOTES.md

@@ -64,7 +64,7 @@ export function AppInstall({ visible = true }: { visible?: boolean }) {const {t:
       <img src="/icons/app-192.png" width="64" height="64" alt={tr("아크로바틱 앱")} />
       <div><span className="eyebrow">ACROBATIC, EVERYWHERE</span><h2 id="app-install-title">{tr("아크로바틱 앱 설치")}</h2><p>{tr("갤럭시와 아이폰, 컴퓨터에서 같은 KAIST 이메일로 사용하세요.")}</p></div>
     </div>
-    <div className="binary-downloads"><a className="btn primary" href="https://github.com/donghyeok8649daniel/acrobatic_app/releases/download/mobile-v0.3.1/Acrobatic-Android-0.3.1.apk"><Download size={18}/>{tr('갤럭시 · Android APK 다운로드')}</a><a className="btn secondary" href="https://github.com/donghyeok8649daniel/acrobatic_app/releases/download/desktop-v0.2.0/Acrobatic-Setup-0.2.0-x64.exe"><Monitor size={18}/>{tr('Windows EXE 다운로드')}</a></div>
+    <div className="binary-downloads"><a className="btn primary" href="https://github.com/donghyeok8649daniel/acrobatic_app/releases/download/mobile-v0.3.2/Acrobatic-Android-0.3.2.apk"><Download size={18}/>{tr('갤럭시 · Android APK 다운로드')}</a><a className="btn secondary" href="https://github.com/donghyeok8649daniel/acrobatic_app/releases/download/desktop-v0.2.0/Acrobatic-Setup-0.2.0-x64.exe"><Monitor size={18}/>{tr('Windows EXE 다운로드')}</a></div>
     <p className="soft-note">{tr('아이폰 설치 앱은 Apple Developer 배포 서명 연결 후 TestFlight로 제공할 예정이에요. 현재 설치 링크는 없어요.')}</p>
     <details className="browser-install"><summary>{tr('브라우저 홈 화면 설치 안내')}</summary>
     {tr(installed ? <div className="install-status"><CheckCircle2 size={19}/>{tr("앱으로 실행 중이에요.")}</div> : prompt ? <button className="btn primary" onClick={install}><Download size={18}/>{tr("브라우저 웹앱 설치")}</button> : <p className="soft-note">{tr("아래 방법으로 설치하세요. 브라우저에 따라 ‘앱 설치’ 또는 ‘홈 화면에 추가’로 표시됩니다.")}</p>)}

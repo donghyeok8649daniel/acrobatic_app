@@ -1,9 +1,9 @@
-# Acrobatic Mobile 0.3.1
+# Acrobatic Mobile 0.3.2
 
-**갤럭시·안드로이드 설치:** `Acrobatic-Android-0.3.1.apk`를 다운로드하고 파일을 열어 설치한다. 다운로드한 브라우저/파일 앱의 ‘이 출처 허용’ 요청이 나오면 설치를 허용한다. 앱 안에서 각자의 KAIST 이메일로 로그인한다.
+**갤럭시·안드로이드 설치:** `Acrobatic-Android-0.3.2.apk`를 다운로드하고 파일을 열어 설치한다. 다운로드한 브라우저/파일 앱의 ‘이 출처 허용’ 요청이 나오면 설치를 허용한다. 앱 안에서 각자의 KAIST 이메일로 로그인한다.
 
 앱은 기존 팀 서버에 연결한다. 훈련 가이드·모식도는 오프라인에서 볼 수 있고, 앱 설정에서 매주 월요일 18:15 개인 알림을 켤 수 있다. 새 공지의 원격 푸시는 아직 연결되지 않았다.
 
-**아이폰:** `Acrobatic-iOS-source-0.3.1.zip`은 개발 소스다. 아이폰에 설치하는 IPA가 아니다. Apple Developer 배포 서명 연결 후 TestFlight/App Store로 제공해야 한다. 현재 아이폰 설치 링크는 없다.
+**아이폰:** `Acrobatic-iOS-source-0.3.2.zip`은 개발 소스다. 아이폰에 설치하는 IPA가 아니다. Apple Developer 배포 서명 연결 후 TestFlight/App Store로 제공해야 한다. 현재 아이폰 설치 링크는 없다.
 
 Android API 35 에뮬레이터와 iPhone 시뮬레이터 검사, iOS 기기용 컴파일을 릴리스 전에 실행한다. `SHA256SUMS.txt`에 APK의 해시가 포함된다. APK 서명 키와 개인 팀 기록은 공개 소스에 포함하지 않는다.
