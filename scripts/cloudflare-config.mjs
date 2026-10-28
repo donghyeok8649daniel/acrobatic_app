@@ -18,6 +18,7 @@ export function cloudflareBindings(config) {
     name: config.workerName,
     account_id: config.accountId,
     workers_dev: true,
+    triggers: {crons:['*/5 * * * *']},
     preview_urls: false,
     d1_databases: [{ binding: 'DB', database_name: config.databaseName, database_id: config.databaseId }],
     r2_buckets: config.videoStorageEnabled === false ? [] : [{ binding: 'BUCKET', bucket_name: config.bucketName }],

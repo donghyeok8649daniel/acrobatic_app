@@ -4,7 +4,7 @@ Electron으로 온라인 팀 앱을 전용 창에서 실행합니다. 팀원 명
 
 ## 다운로드와 설치
 
-[GitHub Releases](https://github.com/donghyeok8649daniel/Acrobatic_Clubmanagement/releases/latest)에서 `Acrobatic-Setup-…-x64.exe`를 받으세요. 실행하면 현재 사용자 계정에 설치하고 바탕화면과 시작 메뉴에 ‘아크로바틱’을 만듭니다. Windows 설정 → 앱 → 설치된 앱에서 제거할 수 있습니다. Windows 10/11 64비트와 인터넷 연결이 필요합니다.
+[GitHub Releases](https://github.com/donghyeok8649daniel/acrobatic_app/releases/latest)에서 `Acrobatic-Setup-…-x64.exe`를 받으세요. 실행하면 현재 사용자 계정에 설치하고 바탕화면과 시작 메뉴에 ‘아크로바틱’을 만듭니다. Windows 설정 → 앱 → 설치된 앱에서 제거할 수 있습니다. Windows 10/11 64비트와 인터넷 연결이 필요합니다.
 
 초기 배포는 Windows 코드 서명이 없습니다. 각 Release의 `SHA256SUMS.txt`로 설치 파일의 SHA-256을 확인할 수 있습니다. 영상 업로드는 서버의 R2 저장소 활성화·연결 후 이용할 수 있습니다.
 

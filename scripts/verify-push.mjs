@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {buildPushPayload} from '@block65/webcrypto-web-push';
+import {validatePushSubscription} from '../lib/push-subscription.ts';
+const b64=v=>Buffer.from(v).toString('base64url');
+const client=await crypto.subtle.generateKey({name:'ECDH',namedCurve:'P-256'},true,['deriveBits']);
+const subscription={endpoint:'https://web.push.apple.com/test-not-a-real-subscription',expirationTime:null,keys:{p256dh:b64(await crypto.subtle.exportKey('raw',client.publicKey)),auth:b64(crypto.getRandomValues(new Uint8Array(16)))}};
+assert.equal(validatePushSubscription(subscription).endpoint,subscription.endpoint);
+for(const endpoint of ['http://fcm.googleapis.com/a','https://127.0.0.1/a','https://fcm.googleapis.com.evil.test/a','https://user:pass@web.push.apple.com/a'])assert.throws(()=>validatePushSubscription({...subscription,endpoint}));
+assert.throws(()=>validatePushSubscription({...subscription,keys:{p256dh:'bad',auth:'bad'}}));
+const signing=await crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},true,['sign','verify']),jwk=await crypto.subtle.exportKey('jwk',signing.privateKey);
+const request=await buildPushPayload({data:JSON.stringify({title:'Test',body:'Private club update',url:'/'}),options:{ttl:60}},subscription,{subject:'https://club.example',publicKey:b64(await crypto.subtle.exportKey('raw',signing.publicKey)),privateKey:jwk.d});
+const headers=new Headers(request.headers);assert.equal(headers.get('content-encoding'),'aes128gcm');assert.match(headers.get('authorization'),/^vapid /);assert.equal(request.method.toUpperCase(),'POST');assert.ok(request.body.byteLength>100);assert.equal(Buffer.from(request.body).includes(Buffer.from('Private club update')),false);
+console.log('PASS: trusted HTTPS push endpoints, key validation, Apple-compatible encrypted payload and VAPID signing; no external messages sent');

@@ -576,6 +576,249 @@ JPEG 사진으로 변환해서 올려주세요.|Convert the photo to JPEG before
 다른 팀원이 경기 상태를 변경했어요. 새로고침 후 다시 시도해주세요.|Another member changed this match's status. Refresh and try again.
 취소된 경기는 복원한 뒤 일정 유형을 변경해주세요.|Restore this cancelled match before changing it to another event type.
 예정 경기는 삭제 대신 경기 취소를 사용해주세요.|Use Cancel match instead of deleting an upcoming match.
+아크로바틱|Acrobatic
+카이스트 족구동아리 전용 앱|KAIST jokgu club member app
+명단 · 훈련 · 출석 · 동비 · 회의록|Members · Training · Attendance · Finances · Minutes
+등록된 KAIST 이메일로 로그인하세요.|Sign in with your registered KAIST email.
+로그인 ID · KAIST 이메일|Login ID · KAIST email
+비밀번호|Password
+초기 비밀번호는 학번입니다. 첫 로그인 후 새 비밀번호를 설정하세요.|Your initial password is your student number. Set a new password after your first sign-in.
+첫 로그인 비밀번호 변경|Change your initial password
+내 비밀번호 변경|Change my password
+팀 기록을 보기 전에 학번 대신 사용할 새 비밀번호를 설정해주세요.|Set a new password before accessing club records.
+현재 비밀번호를 확인한 뒤 새 비밀번호로 변경할 수 있습니다.|Enter your current password to set a new one.
+현재 비밀번호 · 학번|Current password · student number
+현재 비밀번호|Current password
+새 비밀번호|New password
+새 비밀번호 확인|Confirm new password
+10~128자 · 학번과 다른 비밀번호|10–128 characters · Different from your student number
+새 비밀번호가 서로 다릅니다.|The new passwords do not match.
+비밀번호 변경|Change password
+비밀번호를 변경했습니다.|Your password has been changed.
+이메일 또는 비밀번호가 올바르지 않습니다.|Incorrect email or password.
+현재 비밀번호가 올바르지 않습니다.|Your current password is incorrect.
+새 비밀번호는 10~128자로 입력해주세요. 학번은 사용할 수 없습니다.|Use 10–128 characters. Your student number cannot be your new password.
+현재 비밀번호와 다른 비밀번호를 입력해주세요.|Choose a password different from your current password.
+비밀번호를 먼저 변경해주세요.|Change your password first.
+KAIST 이메일과 비밀번호로 로그인해주세요.|Sign in with your KAIST email and password.
+매니저장|Head manager
+동비 사용|Club finances
+회의록|Meeting minutes
+출석부|Attendance register
+훈련 · 매뉴얼|Training & manuals
+일정과 팀 기록|Schedule and club records
+동아리 운영|Club operations
+다음 훈련|Next training
+등록된 일정 없음|No scheduled sessions
+최근 공지|Recent notices
+최근 회의록|Recent meeting minutes
+등록된 공지 없음|No notices yet
+등록된 회의록 없음|No meeting minutes yet
+포지션별 명단|Members by primary position
+참석 예정|Planning to attend
+참석 투표|Attendance poll
+동비 사용 내역|Club financial ledger
+Google 시트와 연결된 팀 기록입니다.|Club records linked to Google Sheets.
+실제 출석 기록입니다. 일정의 참석 예정 투표와 구분해서 관리합니다.|Actual attendance records, separate from attendance RSVPs.
+기록 추가|Add record
+이 기록을 삭제할까요? 시트에도 반영됩니다.|Delete this record? This change will also sync to the spreadsheet.
+기록 수정|Edit record
+새 기록|New record
+내용 작성|Edit content
+학기|Semester
+내역|Description
+총 금액|Total amount
+개당 금액|Unit price
+수량|Quantity
+영수증 첨부|Receipt
+발의 종류|Category
+안건|Agenda
+세부 사항|Details
+날짜 미정|Date not set
+금액 미정|Amount not set
+세부 사항 미정|Details not set
+금액이 입력된 내역만 합산합니다.|Only records with an amount are included.
+기록 기준 잔액|Balance from recorded amounts
+등록된 내역이 없습니다.|No records yet.
+안건 또는 내용 검색|Search agenda or details
+기타|Other
+날짜별 출석 확인|Attendance by date
+출석 날짜|Attendance date
+직책|Office
+출석 상태|Attendance status
+출석|Present
+지각|Late
+결석|Absent
+사유 결석|Excused absence
+미기록|Not recorded
+빈칸은 미기록이며 결석으로 처리하지 않습니다.|Blank cells mean not recorded, not absent.
+등록된 출석 날짜가 없습니다.|No attendance dates yet.
+Google 시트 연동|Google Sheets integration
+명단 · 동비 사용 · 회의록 · 출석부 자동 연동|Automatic sync for members, finances, minutes and attendance
+초기 데이터 반영 완료 · 자동 연동 승인 대기|Initial data imported · Awaiting automatic-sync authorization
+마지막 반영|Last update
+연결된 시트 열기|Open linked spreadsheet
+아래 스크립트를 연결된 시트의 확장 프로그램 → Apps Script에 붙여넣고 installAcrobaticSync를 한 번 실행하세요. Google 권한 승인 후 5분마다 양방향 동기화합니다.|Paste the script into Extensions → Apps Script in the linked spreadsheet, then run installAcrobaticSync once. After Google authorization, two-way sync runs every 5 minutes.
+연동 스크립트 받기|Download integration script
+스크립트에는 비공개 연결 키가 들어 있습니다. 공개 저장소에 올리지 마세요. 같은 항목을 양쪽에서 다르게 수정하면 충돌을 알리고 덮어쓰지 않습니다.|The script contains a private connection key. Do not publish it. Conflicting edits are reported rather than overwritten.
+훈련|Training
+훈련공지와 매뉴얼, 주간 다이어리와 시간표|Announcements, manuals, weekly diary and timetable
+훈련공지|Training announcements
+매뉴얼|Manuals
+주간 다이어리|Weekly diary
+훈련 기록 · 영상|Session records & videos
+훈련 매뉴얼 추가|Add training manual
+주간 다이어리 작성|Write weekly diary
+훈련공지 작성|Create training announcement
+훈련 이름|Training name
+최소 인원|Minimum participants
+훈련 목표|Training goal
+진행 방법|Instructions
+해당 주 월요일|Monday of the week
+주간 다이어리 내용|Weekly diary entry
+훈련시간표|Training timetable
+훈련공지 제목|Announcement title
+시작 시간|Start time
+종료 시간|End time
+장소|Location
+안내 사항|Notes
+시간과 활동을 한 줄씩 입력하세요.|Enter one time and activity per line.
+모식도|Diagram
+없음|None
+A/B 킥 기본 배치|A/B kick setup
+A/B 킥 기본 5인 배치|A/B kick setup for five players
+수비 세터 공격수 연결|Defender–setter–attacker sequence
+수비 세터 공격수 연결 순서|Defender–setter–attacker sequence
+수비 1|Defender 1
+수비 2|Defender 2
+수비 세터|Defense setter
+공격 세터|Attack setter
+공격 세터 → 공격수 → 수비 → 수비 세터 → 공격 세터|Attack setter → Attacker → Defender → Defense setter → Attack setter
+양쪽 코트에서 수비 → 세터 → 공격수 순서를 유지합니다.|Both sides follow the defender → setter → attacker sequence.
+오늘 진행할 훈련|Training for this session
+훈련공지 올리기|Publish training announcement
+매뉴얼 수정|Edit manual
+시작 주|Week starting
+시간표 미등록|No timetable yet
+공지와 투표 링크 공유|Share announcement and poll link
+참석 투표 · 오늘의 훈련 매뉴얼|Attendance poll · Training manuals
+공유하거나 복사했습니다.|Shared or copied.
+훈련 매뉴얼이 아직 없습니다.|No training manuals yet.
+등록된 훈련공지가 없습니다.|No training announcements yet.
+등록된 주간 다이어리가 없습니다.|No weekly diaries yet.
+아크로바틱 앱 설치|Install Acrobatic
+갤럭시와 아이폰, 컴퓨터에서 같은 KAIST 이메일로 사용하세요.|Use the same KAIST email on Galaxy, iPhone and desktop.
+출석·장부·영상은 인터넷에 연결했을 때 팀원들과 공유됩니다. 설치한 기기에서도 KAIST 이메일과 비밀번호로 로그인해주세요.|Attendance, finances and videos are shared online. Sign in with your KAIST email and password on each device.
+일정과 참석 투표|Schedule and attendance polls
+훈련·경기 일정과 참석 예정 현황.|Training and match schedules with attendance RSVPs.
+동아리 운영 및 훈련 공지.|Club and training announcements.
+할 일과 장비|Tasks and equipment
+담당 업무와 장비 현황.|Assigned tasks and equipment inventory.
+영문 훈련 이름 (선택)|English training name (optional)
+영문 훈련 목표 (선택)|English goal (optional)
+영문 진행 방법 (선택)|English instructions (optional)
+새 버전이 있습니다.|A new version is available.
+업데이트|Update
+앱 버전|App version
+인터넷 연결 후 업데이트해주세요.|Connect to the internet to update.
+저장하지 않은 내용이 사라질 수 있습니다. 업데이트할까요?|Unsaved changes may be lost. Update now?
+업데이트하지 못했습니다. 잠시 후 다시 시도해주세요.|Could not update. Please try again later.
+동아리 통장|Club bank account
+모임통장 계좌와 동비 관리 담당자|Group account and finance manager
+통장 변경 · 인계|Change account or hand over
+통장 등록|Register account
+은행명|Bank
+계좌번호|Account number
+예금주|Account holder
+동비 관리 담당자|Finance manager
+계좌 안내|Account notes
+동장이 계좌와 담당자를 변경할 수 있습니다. 지정된 담당자는 동비 장부를 관리할 수 있습니다.|The captain can change the account and finance manager. The assigned manager can edit the ledger.
+등록된 통장이 없습니다. 통장 개설 후 등록할 수 있습니다.|No account registered. Add one after opening the account.
+통장 변경 이력|Account change history
+담당자|Manager
+계좌번호를 확인해주세요.|Check the account number.
+동비 관리 담당자만 수정할 수 있습니다.|Only finance managers can edit this.
+휴대폰 알림|Phone notifications
+새 훈련공지·동아리 공지·주간 다이어리를 알림으로 받습니다.|Receive notifications for training announcements, club notices and weekly diaries.
+아이폰은 iOS 16.4 이상에서 Safari → 홈 화면에 추가 후 설치한 앱을 열어 알림을 허용하세요. 갤럭시는 Chrome에서 앱을 설치하면 됩니다.|On iPhone with iOS 16.4 or later, add the app to your Home Screen from Safari, open it and allow notifications. On Galaxy, install from Chrome.
+알림 다시 연결|Reconnect notifications
+알림 허용|Allow notifications
+테스트 알림|Test notification
+이 기기 알림 해제|Disable notifications on this device
+이 환경에서는 푸시 알림을 지원하지 않습니다. 휴대폰에 설치한 앱에서 설정하세요.|Push is unavailable in this environment. Set it up in the installed phone app.
+알림 서버 연결이 필요합니다.|The notification server needs to be connected.
+기기 설정에서 알림 권한을 허용해주세요.|Allow notifications in your device settings.
+테스트 알림을 보냈습니다.|Test notification sent.
+테스트 알림을 전송 대기열에 넣었습니다.|Test notification queued.
+이 기기의 알림을 연결했습니다.|Notifications are connected on this device.
+주발|Preferred foot
+왼발|Left
+오른발|Right
+양발|Both
+활동 여부|Activity status
+활동|Active
+비활동|Inactive
+활동 중단|On hold
+탈퇴|Former member
+회원 유형|Member type
+학부생|Undergraduate
+교환학생|Exchange student
+대학원생|Graduate student
+활동 여부는 동장만 지정할 수 있습니다.|Only the captain can set activity status.
+회원 유형은 동장만 지정할 수 있습니다.|Only the captain can set member type.
+아크로바틱 가입 신청|Join Acrobatic
+가입 신청|Apply to join
+KAIST 이메일|KAIST email
+학번|Student number
+가입 신청을 접수했습니다. 동장 승인 후 KAIST 이메일과 학번으로 처음 로그인하세요.|Your application has been received. After captain approval, sign in with your KAIST email and student number.
+로그인으로 돌아가기|Back to sign in
+가입 신청 승인|Membership approval
+대기 중인 가입 신청이 없습니다.|No pending applications.
+가입 신청을 불러오지 못했습니다.|Could not load membership applications.
+승인할 역할|Role to assign
+심의용 시트 명단에도 추가|Also add to the review spreadsheet roster
+승인|Approve
+거절|Reject
+직책 지정과 인수인계|Roles and handover
+직책과 운영 권한을 지정하고, 다음 동장에게 관리 권한을 넘길 수 있습니다.|Assign offices and permissions, and transfer leadership to the next captain.
+부원|Member
+직책 이름|Office title
+예: 총무, 훈련부장, 매니저장|For example: treasurer, training lead, head manager
+운영 권한|Management permissions
+직책 저장|Save office
+동장 인수인계|Captain handover
+다음 동장|Next captain
+인계 후 내 역할|My role after handover
+다음 동장은 먼저 가입 승인과 첫 비밀번호 변경을 완료해야 합니다.|The next captain must be approved and change their initial password first.
+동장 권한 인계|Transfer captain permissions
+동장 권한을 선택한 부원에게 넘길까요?|Transfer captain permissions to the selected member?
+인계받을 부원이 먼저 로그인하고 비밀번호를 변경해야 합니다.|The receiving member must sign in and change their initial password first.
+학기별 회비 납부|Semester dues
+개인별 납부 현황은 수입 장부에 중복 합산하지 않습니다.|Individual dues records are not counted again as ledger income.
+새 학기 회비 설정|Set up a new semester
+선수 회비|Player dues
+선수 겸 매니저 회비|Player-manager dues
+매니저 회비|Manager dues
+학기 생성|Create semester
+회비 학기|Dues semester
+납부 완료|Paid in full
+납부 대상액|Amount due
+납부액|Amount paid
+납부일|Payment date
+면제|Exempt
+비고|Notes
+이미 등록된 학기입니다.|This semester already exists.
+회비 금액을 확인해주세요.|Check the dues amount.
+지출 추가|Add expense
+수입과 지출|Income or expense
+이미 가입된 부원입니다.|This member is already registered.
+친목조 구성|Social groups
+주포지션 기준으로 구성합니다. 매니저는 지정된 조에 함께합니다.|Groups follow primary positions. Managers join their assigned group.
+공격수 친목조|Attack group
+세터 친목조|Setter group
+수비 친목조|Defense group
+명단 · 동비 사용 · 회비 납부 · 회의록 자동 연동|Automatic sync for members, finances, dues and minutes
+부원 대신 가입 신청|Submit an application for a member
 `;
 export const english:Readonly<Record<string,string>>=Object.fromEntries(entries.trim().split('\n').map(row=>{const index=row.indexOf('|');return [row.slice(0,index),row.slice(index+1)];}));
 

@@ -1,6 +1,6 @@
 {
   "name": "acrobatic-clubmanagement",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "engines": {
     "node": ">=22.13.0"
@@ -13,12 +13,14 @@
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
     "typecheck": "tsc --noEmit",
-    "test:unit": "node scripts/verify-pwa.mjs && node scripts/verify-positions.mjs && node scripts/verify-members-unit.mjs && node scripts/verify-i18n.mjs && node scripts/verify-match-ui.mjs && node scripts/verify-login-alias.mjs",
+    "test:unit": "node scripts/verify-pwa.mjs && node scripts/verify-positions.mjs && node scripts/verify-members-unit.mjs && node scripts/verify-i18n.mjs && node scripts/verify-match-ui.mjs && node scripts/verify-login-alias.mjs && node scripts/verify-sheet-sync.mjs && node scripts/verify-push.mjs",
     "test:integration": "node scripts/verify-runtime.mjs",
-    "deploy:cloudflare": "node scripts/deploy-cloudflare.mjs"
+    "deploy:cloudflare": "node scripts/deploy-cloudflare.mjs",
+    "test:email-sheets": "node scripts/verify-runtime.mjs scripts/verify-email-sheets.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
+    "@block65/webcrypto-web-push": "2.0.0",
     "@hookform/resolvers": "^5.7.1",
     "@shadcn/react": "^0.3.0",
     "class-variance-authority": "0.7.1",

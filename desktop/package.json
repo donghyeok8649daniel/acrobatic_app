@@ -1,6 +1,6 @@
 {
   "name": "acrobatic-desktop",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "KAIST 아크로바틱 팀 관리 Windows 앱",
   "author": "Acrobatic Club",
   "private": true,
@@ -20,10 +20,27 @@
     "productName": "아크로바틱",
     "executableName": "Acrobatic",
     "asar": true,
-    "directories": { "output": "release", "buildResources": "assets" },
-    "files": ["main.cjs", "navigation.cjs", "first-login.cjs", "offline.html", "assets/icon.png", "package.json"],
+    "directories": {
+      "output": "release",
+      "buildResources": "assets"
+    },
+    "files": [
+      "main.cjs",
+      "navigation.cjs",
+      "first-login.cjs",
+      "offline.html",
+      "assets/icon.png",
+      "package.json"
+    ],
     "win": {
-      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
       "icon": "assets/icon.ico",
       "artifactName": "Acrobatic-Setup-${version}-${arch}.${ext}",
       "signExecutable": false

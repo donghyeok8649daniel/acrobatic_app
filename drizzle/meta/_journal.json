@@ -15,6 +15,27 @@
       "when": 1792273040566,
       "tag": "0001_cloudy_nocturne",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1793100000000,
+      "tag": "0002_email_accounts",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1793100001000,
+      "tag": "0003_push_notifications",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1793100002000,
+      "tag": "0004_membership_requests",
+      "breakpoints": true
     }
   ]
 }

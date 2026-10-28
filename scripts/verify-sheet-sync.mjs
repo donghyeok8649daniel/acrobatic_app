@@ -1,0 +1,26 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+import {SHEET_BRIDGE_TEMPLATE} from '../lib/sheet-bridge-template.ts';
+assert.equal(SHEET_BRIDGE_TEMPLATE,fs.readFileSync('scripts/google-sheets-bridge.gs','utf8').replace(/\r\n/g,'\n'));
+import {validateSnapshot,mergeSnapshots,applySnapshot} from '../lib/sheet-sync.ts';
+import {initialState} from '../lib/domain.ts';
+import {passwordHash,verifyPassword,isKaistEmail} from '../lib/password.ts';
+const roster=[{id:'r1',semester:'test',joinedSemester:'test',generation:'1',studentNumber:'20990001',name:'Captain',office:'동장/주장',position:'공격',secondaryPosition:'공격',email:'captain@example.kaist.ac.kr'}];
+const base=validateSnapshot({roster,ledger:[{id:'l1',semester:'test',title:'Equipment',date:'',amount:null,unitPrice:1000,quantity:2,receipt:''}],minutes:[{id:'n1',date:'2026-10-27',category:'훈련',title:'Agenda',body:'Old'}],rollcall:[{id:'date:2026-11-02',date:'2026-11-02',semester:'test',statuses:{}}]});
+assert.equal(base.roster[0].secondaryPosition,'');assert.equal(base.ledger[0].date,'');assert.equal(base.ledger[0].amount,null);
+const app=structuredClone(base),sheet=structuredClone(base);app.minutes[0].body='App edit';sheet.minutes[0].title='Sheet edit';
+const merged=mergeSnapshots(base,app,sheet);assert.equal(merged.minutes[0].body,'App edit');assert.equal(merged.minutes[0].title,'Sheet edit');
+sheet.minutes[0].body='Conflicting edit';assert.throws(()=>mergeSnapshots(base,app,sheet),/동기화 충돌/);
+const deleted=structuredClone(base);deleted.minutes=[];assert.deepEqual(mergeSnapshots(base,base,deleted).minutes,[]);
+const changed=structuredClone(base);changed.minutes[0].title='New';assert.throws(()=>mergeSnapshots(base,changed,deleted),/동기화 충돌/);
+const state=initialState('Test','Captain');state.members[3].photoRevision='keep';state.events=[{id:'past',title:'Past',date:'2020-01-01',time:'18:30',location:'Court',kind:'대회',note:'',attendance:{m4:'참석'},entryIds:['m4']}];
+const result=applySnapshot(state,base);assert.equal(result.members.length,1);assert.equal(result.members[0].id,'m1');assert.equal(result.archivedMembers.length,15);assert.equal(result.events[0].entryIds[0],'m4');assert.deepEqual(result.transactions,[]);
+const charged=structuredClone(base);charged.ledger[0].amount=-2000;assert.equal(applySnapshot(result,charged).transactions[0].amount,-2000);
+const pepper='test-only-pepper',hash=await passwordHash('20990001',pepper);assert.ok(await verifyPassword('20990001',hash,pepper));assert.equal(await verifyPassword('wrong',hash,pepper),false);assert.equal(await verifyPassword('20990001',hash,'other'),false);assert.notEqual(hash,await passwordHash('20990001',pepper));
+assert.equal(isKaistEmail('a@kaist.ac.kr'),true);assert.equal(isKaistEmail('a@kaist.ac.kr.evil.test'),false);
+// The delivered Apps Script and server use the same three-way merge behavior.
+const context=vm.createContext({});vm.runInContext(fs.readFileSync('scripts/google-sheets-bridge.gs','utf8'),context);
+context.base=JSON.parse(JSON.stringify(base));context.app=JSON.parse(JSON.stringify(app));context.sheet=JSON.parse(JSON.stringify(merged));
+assert.equal(context.acroMerge_(context.base,context.app,context.sheet).minutes[0].title,'Sheet edit');
+console.log('PASS: normalized roster, null finance fields, merge/conflict/delete semantics, history preservation, salted/peppered passwords and Apps Script parity');

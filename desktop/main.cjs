@@ -29,7 +29,7 @@ else {
     session.defaultSession.setPermissionRequestHandler((_contents, _permission, callback) => callback(false));
     session.defaultSession.setPermissionCheckHandler(() => false);
     window = new BrowserWindow({
-      title: '아크로바틱 · 코트인', width: 1440, height: 960,
+      title: '아크로바틱', width: 1440, height: 960,
       minWidth: 760, minHeight: 600, show: false,
       backgroundColor: '#f6f7f9', icon: path.join(__dirname, 'assets/icon.png'),
       webPreferences: { nodeIntegration: false, contextIsolation: true, sandbox: true, webSecurity: true, webviewTag: false }
@@ -46,7 +46,7 @@ else {
       if (isMainFrame && code !== -3 && isAppUrl(target)) window.loadFile(offlineFile).catch(() => {});
     });
     window.webContents.on('page-title-updated', event => {
-      event.preventDefault(); window.setTitle('아크로바틱 · 코트인');
+      event.preventDefault(); window.setTitle('아크로바틱');
     });
     Menu.setApplicationMenu(Menu.buildFromTemplate([
       { label: '아크로바틱', submenu: [

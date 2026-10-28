@@ -12,7 +12,7 @@ export function LanguageProvider({children}:{children:ReactNode}){
   const sync=(event:StorageEvent)=>{if(event.key===storageKey&&(event.newValue==='ko'||event.newValue==='en'))setLanguage(event.newValue);};
   window.addEventListener('storage',sync);return()=>window.removeEventListener('storage',sync);
  },[]);
- useEffect(()=>{document.documentElement.lang=language;document.title=language==='en'?'KAIST Acrobatic · Courtin':'KAIST 아크로바틱 · 코트인';},[language]);
+ useEffect(()=>{document.documentElement.lang=language;document.title=language==='en'?'KAIST Acrobatic':'KAIST 아크로바틱';},[language]);
  const value=useMemo(()=>({language,setLanguage:(next:Language)=>{setLanguage(next);try{localStorage.setItem(storageKey,next);}catch{}}}),[language]);
  return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 }

@@ -1,0 +1,61 @@
+import assert from 'node:assert/strict';
+const origin=process.env.ACRO_ORIGIN;
+async function read(r,label){const raw=await r.text();try{return JSON.parse(raw);}catch{throw Error(label+' returned '+r.status+' with '+raw.length+' bytes: '+raw.slice(0,150));}}
+async function post(action,payload={},cookie=''){const r=await fetch(origin+'/api/team',{method:'POST',headers:{origin,'content-type':'application/json',cookie},body:JSON.stringify({action,payload})});return {status:r.status,data:await read(r,action),cookie:r.headers.get('set-cookie')?.split(';')[0]};}
+async function get(path,cookie){const r=await fetch(origin+path,{headers:cookie?{cookie}:{}});return {status:r.status,data:await read(r,path)};}
+const first=await post('loginEmail',{email:'CAPTAIN@KAIST.AC.KR',password:'20990001'});assert.equal(first.status,200);assert.equal(first.data.requirePasswordChange,true);assert.equal(first.data.state,undefined);
+const gate=await get('/api/team',first.cookie);assert.equal(gate.data.requirePasswordChange,true);assert.equal(gate.data.state,undefined);
+assert.equal((await get('/api/push',first.cookie)).status,401);assert.equal((await get('/api/members/m1/photo',first.cookie)).status,401);assert.equal((await get('/api/videos/not-found',first.cookie)).status,401);
+assert.equal((await post('notice',{title:'Blocked',body:'Blocked'},first.cookie)).status,403);
+assert.equal((await post('changePassword',{currentPassword:'wrong',newPassword:'a-secure-new-password'},first.cookie)).status,401);
+assert.equal((await post('changePassword',{currentPassword:'20990001',newPassword:'123'},first.cookie)).status,400);
+const change=await post('changePassword',{currentPassword:'20990001',newPassword:'a-secure-new-password'},first.cookie);assert.equal(change.status,200);
+assert.equal((await get('/api/team',first.cookie)).status,401);
+assert.equal((await post('loginEmail',{email:'captain@kaist.ac.kr',password:'20990001'})).status,401);
+const signed=await post('loginEmail',{email:'captain@kaist.ac.kr',password:'a-secure-new-password'});assert.equal(signed.status,200);assert.equal(signed.data.memberId,'m1');assert.ok(signed.data.state);
+const unauthSheet=await fetch(origin+'/api/sheets',{method:'POST',headers:{'content-type':'application/json'},body:'{}'});assert.equal(unauthSheet.status,401);
+const pushClient=await crypto.subtle.generateKey({name:'ECDH',namedCurve:'P-256'},true,['deriveBits']);
+const pushSub={endpoint:'https://web.push.apple.com/fake-local-test',expirationTime:null,keys:{p256dh:Buffer.from(await crypto.subtle.exportKey('raw',pushClient.publicKey)).toString('base64url'),auth:Buffer.from(crypto.getRandomValues(new Uint8Array(16))).toString('base64url')}};
+const notify=await fetch(origin+'/api/push',{method:'POST',headers:{origin,'content-type':'application/json',cookie:signed.cookie},body:JSON.stringify({subscription:pushSub,language:'en',test:true})});assert.equal(notify.status,200);assert.equal((await notify.json()).sent,1);
+const record={id:'ledger-test',semester:'Test',title:'Equipment',date:'',amount:-1000,unitPrice:null,quantity:null,receipt:''};
+assert.equal((await post('sheetRecord',{collection:'ledger',record},signed.cookie)).status,200);
+const player=await post('loginEmail',{email:'player@kaist.ac.kr',password:'existing-player-password'});assert.equal(player.status,200);
+assert.equal((await post('sheetRecord',{collection:'ledger',record},player.cookie)).status,400);
+assert.equal((await get('/api/sheets/setup',player.cookie)).status,403);
+const setup=await fetch(origin+'/api/sheets/setup',{headers:{cookie:signed.cookie}});assert.equal(setup.status,200);assert.ok((await setup.text()).includes('installAcrobaticSync'));
+let latest=(await get('/api/team',signed.cookie)).data.state;
+const snapshot={roster:latest.members.map(m=>m.sheetProfile),ledger:latest.sheetLedger,minutes:latest.meetingMinutes,rollcall:latest.rollcall};
+const external=structuredClone(snapshot);external.minutes.push({id:'from-sheet',date:'2026-10-28',category:'훈련',title:'Sheet agenda',body:'A note'});
+async function sync(body){const r=await fetch(origin+'/api/sheets',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer test-sync-secret'},body:JSON.stringify({protocolVersion:2,spreadsheetId:'test-sheet',...body})});return {status:r.status,data:await r.json()};}
+assert.equal((await sync({base:snapshot,snapshot:external})).status,200);
+// Repeated sync never resets a password which a member has changed.
+assert.equal((await post('loginEmail',{email:'captain@kaist.ac.kr',password:'a-secure-new-password'})).status,200);
+const baseline=structuredClone(external);await post('sheetRecord',{collection:'minutes',record:{...external.minutes[0],body:'App side'}},signed.cookie);external.minutes[0].body='Sheet side';assert.equal((await sync({base:baseline,snapshot:external})).status,409);
+const manual=await post('trainingManual',{title:'Drill',minimum:3,goal:'Practice',steps:'1. Set\n2. Kick',diagram:'ab'},signed.cookie);assert.equal(manual.status,200);const manualId=manual.data.state.trainingManuals[0].id;
+const publication=await post('publishTraining',{title:'Training test',date:'2026-11-02',time:'18:30',endTime:'20:00',location:'Court',note:'Bring shoes',manualIds:[manualId]},signed.cookie);assert.equal(publication.status,200);assert.deepEqual(publication.data.state.events[0].manualIds,[manualId]);assert.ok(publication.data.state.notices[0].body.includes('Drill'));
+assert.equal((await post('weeklyDiary',{weekStart:'2026-10-26',title:'Week',diary:'Plan',timetable:'18:30 Warm-up'},signed.cookie)).status,200);
+assert.equal((await post('weeklyDiary',{weekStart:'2026-10-27',title:'Invalid',diary:'',timetable:''},signed.cookie)).status,400);
+assert.equal((await post('trainingManual',{title:'No',minimum:1,goal:'',steps:'No',diagram:'none'},player.cookie)).status,400);
+assert.equal((await post('create',{name:'Other',captain:'Other'})).status,403);
+const bank={bankName:'Test bank',accountNumber:'1234-5678-90',holder:'Test club',managerId:'m4',note:'Test only'};
+assert.equal((await post('financeAccount',bank,player.cookie)).status,400);
+assert.equal((await post('financeAccount',bank,signed.cookie)).status,200);
+assert.equal((await post('sheetRecord',{collection:'ledger',record:{...record,title:'Treasurer edit'}},player.cookie)).status,200);
+assert.equal((await post('sheetRecord',{collection:'minutes',record:{id:'no-access',date:'',category:'',title:'No',body:''}},player.cookie)).status,400);
+assert.equal((await post('financeAccount',{...bank,managerId:'m1'},signed.cookie)).status,200);
+assert.equal((await post('sheetRecord',{collection:'ledger',record},player.cookie)).status,400);
+const current=(await get('/api/team',signed.cookie)).data.state;assert.equal(current.financeAccountHistory.length,2);
+const version=await get('/api/version');assert.equal(version.data.version,'0.2.0');
+assert.equal((await post('duesSemester',{semester:'27 spring',playerAmount:30000,assistantAmount:20000,managerAmount:0},signed.cookie)).status,200);
+const duesState=(await get('/api/team',signed.cookie)).data.state;assert.equal(duesState.duesRecords.length,2);assert.equal(duesState.transactions.length,1);
+const requestJoin=await fetch(origin+'/api/membership',{method:'POST',headers:{origin,'content-type':'application/json'},body:JSON.stringify({action:'request',name:'New exchange member',email:'exchange@kaist.ac.kr',studentNumber:'20990003',position:'수비',dominantFoot:'right',membershipType:'교환학생'})});assert.equal(requestJoin.status,200);
+assert.equal((await get('/api/membership',player.cookie)).status,403);
+const pending=(await get('/api/membership',signed.cookie)).data.requests;assert.equal(pending.length,1);
+const approved=await fetch(origin+'/api/membership',{method:'POST',headers:{origin,'content-type':'application/json',cookie:signed.cookie},body:JSON.stringify({action:'approve',id:pending[0].id,role:'player',includeInSheet:false})});assert.equal(approved.status,200);
+assert.equal((await post('loginEmail',{email:'exchange@kaist.ac.kr',password:'20990003'})).data.requirePasswordChange,true);
+let after=(await get('/api/team',signed.cookie)).data.state;assert.equal(after.members.find(m=>m.name==='New exchange member').keepInApp,true);assert.equal(after.members.find(m=>m.name==='New exchange member').sheetProfile,undefined);
+assert.equal((await post('memberRole',{member:'m4',role:'assistant',office:'훈련부장'},player.cookie)).status,400);
+assert.equal((await post('memberRole',{member:'m4',role:'assistant',office:'훈련부장'},signed.cookie)).status,200);
+assert.equal((await post('transferCaptain',{member:'m4',previousRole:'player',currentPassword:'wrong'},signed.cookie)).status,401);
+const handover=await post('transferCaptain',{member:'m4',previousRole:'player',currentPassword:'a-secure-new-password'},signed.cookie);assert.equal(handover.status,200);assert.equal(handover.data.state.members.find(m=>m.id==='m4').role,'captain');assert.equal(handover.data.state.members.find(m=>m.id==='m1').role,'player');assert.equal((await get('/api/membership',signed.cookie)).status,403);
+console.log('PASS: first-login gate across endpoints, password rotation/session revocation, member authorization, sheet sync/password preservation/conflicts, manuals, announcements, weekly diaries, bank-account handover and version API');
