@@ -1,0 +1,12 @@
+**/.gradle/
+**/build/
+**/local.properties
+**/*.jks
+**/*.p12
+**/*.keystore
+ios/*.xcodeproj/
+ios/Acrobatic/Info.plist
+ios/*.xcarchive/
+ios/*.ipa
+ios/*.xcresult/
+.DS_Store

@@ -1,0 +1,136 @@
+name: Mobile apps
+on:
+  push:
+    tags: ['mobile-v*']
+  workflow_dispatch:
+  pull_request:
+    paths: ['mobile/**', '.github/workflows/mobile-release.yml']
+permissions:
+  contents: read
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+      - name: Prepare signing key
+        if: github.event_name != 'pull_request'
+        env:
+          KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          test -n "$KEYSTORE"
+          printf '%s' "$KEYSTORE" | base64 --decode > "$RUNNER_TEMP/acrobatic.p12"
+          chmod 600 "$RUNNER_TEMP/acrobatic.p12"
+      - name: Unit tests, lint and signed APK
+        if: github.event_name != 'pull_request'
+        working-directory: mobile/android
+        env:
+          ANDROID_KEYSTORE_PATH: ${{ runner.temp }}/acrobatic.p12
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: gradle --no-daemon :app:testDebugUnitTest :app:lintRelease :app:assembleRelease
+      - name: Debug unit tests for pull requests
+        if: github.event_name == 'pull_request'
+        working-directory: mobile/android
+        run: gradle --no-daemon :app:testDebugUnitTest :app:lintDebug :app:assembleDebug
+      - name: Enable emulator acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Android device launch and offline guide test
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          working-directory: mobile/android
+          script: gradle --no-daemon :app:connectedDebugAndroidTest
+      - name: Verify APK signature and checksum
+        if: github.event_name != 'pull_request'
+        run: |
+          mkdir -p mobile/release
+          cp mobile/android/app/build/outputs/apk/release/app-release.apk mobile/release/Acrobatic-Android-0.3.0.apk
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose mobile/release/Acrobatic-Android-0.3.0.apk
+          cd mobile/release
+          sha256sum Acrobatic-Android-0.3.0.apk > SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        if: github.event_name != 'pull_request'
+        with:
+          name: Acrobatic-Android
+          path: mobile/release/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Android-test-reports
+          path: mobile/android/app/build/reports/
+      - name: Remove signing material
+        if: always()
+        run: rm -f "$RUNNER_TEMP/acrobatic.p12"
+  ios:
+    runs-on: macos-15
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate Xcode project
+        working-directory: mobile/ios
+        run: |
+          command -v xcodegen || brew install xcodegen
+          xcodebuild -version
+          xcodegen generate
+      - name: Select an available iPhone simulator
+        run: |
+          python3 - <<'PY'
+          import json,subprocess,os
+          devices=json.loads(subprocess.check_output(['xcrun','simctl','list','devices','available','-j']))['devices']
+          selected=next(d['udid'] for runtime,items in sorted(devices.items(),reverse=True) if 'iOS' in runtime for d in items if d['isAvailable'] and d['name'].startswith('iPhone'))
+          with open(os.environ['GITHUB_ENV'],'a') as f:f.write('IOS_SIM_ID='+selected+'\n')
+          PY
+      - name: iPhone simulator build and tests
+        working-directory: mobile/ios
+        run: xcodebuild -project Acrobatic.xcodeproj -scheme Acrobatic -destination "platform=iOS Simulator,id=$IOS_SIM_ID" -parallel-testing-enabled NO -derivedDataPath build -resultBundlePath test-results CODE_SIGNING_ALLOWED=NO test
+      - name: Compile device archive without distribution signing
+        working-directory: mobile/ios
+        run: xcodebuild -project Acrobatic.xcodeproj -scheme Acrobatic -configuration Release -destination 'generic/platform=iOS' -archivePath build/Acrobatic-unsigned.xcarchive CODE_SIGNING_ALLOWED=NO archive
+      - name: Package iOS sources
+        run: |
+          mkdir -p mobile/release
+          zip -qr mobile/release/Acrobatic-iOS-source-0.3.0.zip mobile/ios/Acrobatic mobile/ios/AcrobaticTests mobile/ios/AcrobaticUITests mobile/ios/project.yml mobile/shared mobile/README.md
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Acrobatic-iOS-source
+          path: mobile/release/Acrobatic-iOS-source-0.3.0.zip
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: iOS-test-results
+          path: mobile/ios/test-results.xcresult/
+  release:
+    if: startsWith(github.ref, 'refs/tags/mobile-v')
+    needs: [android, ios]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: Acrobatic-Android
+          path: release
+      - uses: actions/download-artifact@v4
+        with:
+          name: Acrobatic-iOS-source
+          path: release
+      - name: Publish installable Android APK and iOS developer sources
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" release/* --verify-tag --title 'Acrobatic Mobile 0.3.0' --notes-file mobile/RELEASE-NOTES.md

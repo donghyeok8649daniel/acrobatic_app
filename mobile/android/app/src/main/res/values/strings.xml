@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Acrobatic</string>
+    <string name="guide">Training guide</string>
+    <string name="more">App settings</string>
+    <string name="retry">Reconnect</string>
+    <string name="offline">Connection unavailable. Your team records remain on the server. You can read the training guide offline.</string>
+    <string name="reminder_title">Personal training reminder</string>
+    <string name="reminder_body">Monday training starts at 18:30. Check the app for today’s announcement.</string>
+    <string name="reminder_on">Enable Monday 18:15 reminder (Korea time)</string>
+    <string name="reminder_off">Disable personal reminder</string>
+    <string name="reminder_ready">Personal reminder enabled. It repeats weekly; check club announcements for cancellations.</string>
+    <string name="reminder_stopped">Personal reminder disabled.</string>
+    <string name="permission_needed">Allow notifications in device settings to enable the reminder.</string>
+    <string name="update">Download app updates</string>
+    <string name="share">Share club app</string>
+    <string name="reload">Refresh team records</string>
+    <string name="close">Close</string>
+    <string name="leave_title">Open external link?</string>
+    <string name="open">Open</string>
+    <string name="select_photo">Choose a profile photo</string>
+    <string name="external_error">No app can open this link.</string>
+</resources>

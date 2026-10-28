@@ -1,0 +1,62 @@
+name: Acrobatic
+options:
+  bundleIdPrefix: kr.acrobatic.club
+  deploymentTarget:
+    iOS: '16.0'
+settings:
+  base:
+    SWIFT_VERSION: '5.0'
+    MARKETING_VERSION: '0.3.0'
+    CURRENT_PROJECT_VERSION: '3'
+    TARGETED_DEVICE_FAMILY: '1,2'
+targets:
+  Acrobatic:
+    type: application
+    platform: iOS
+    sources:
+      - Acrobatic
+      - path: ../shared/manuals.html
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: kr.acrobatic.club
+        GENERATE_INFOPLIST_FILE: NO
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    info:
+      path: Acrobatic/Info.plist
+      properties:
+        CFBundleDisplayName: Acrobatic
+        CFBundleShortVersionString: '0.3.0'
+        CFBundleVersion: '3'
+        UILaunchScreen: {}
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        NSCameraUsageDescription: Take a profile photo for your Acrobatic membership.
+        NSPhotoLibraryUsageDescription: Choose a profile photo for your Acrobatic membership.
+        ITSAppUsesNonExemptEncryption: false
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait, UIInterfaceOrientationPortraitUpsideDown, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
+  AcrobaticTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [AcrobaticTests]
+    dependencies:
+      - target: Acrobatic
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+  AcrobaticUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [AcrobaticUITests]
+    dependencies:
+      - target: Acrobatic
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  Acrobatic:
+    build:
+      targets:
+        Acrobatic: all
+    test:
+      targets: [AcrobaticTests, AcrobaticUITests]

@@ -860,3 +860,5 @@ export function translate(text:string,language:Language):string{
 }
 
 Object.assign(english,{'학부 부원 명단에 포함':'Include in the undergraduate member list','Google 시트에는 별도로 추가해주세요. 앱에서 승인한 부원은 시트에 없어도 유지됩니다.':'Add the member to Google Sheets separately. Approved app members remain even if they are absent from the sheet.'});
+
+Object.assign(english,{'다운로드한 앱의 상단 앱 설정에서 개인 훈련 알림을 켤 수 있어요.':'Enable personal training reminders in the downloaded app’s top app settings menu.','새 공지의 서버 푸시는 아직 연결되지 않았어요. 개인 반복 알림과 구분해서 사용해주세요.':'Server push for new announcements is not connected yet. Personal recurring reminders are separate.','아크로바틱 모바일 앱':'Acrobatic mobile app','다운로드한 앱으로 실행 중이에요. 같은 KAIST 이메일로 팀 기록을 함께 사용합니다.':'Running in the downloaded app. Use your KAIST email to access shared team records.','상단 앱 설정에서 오프라인 훈련 가이드와 개인 훈련 알림을 이용하세요.':'Use the top app settings menu for the offline training guide and personal reminders.','앱 업데이트 다운로드':'Download app updates'});

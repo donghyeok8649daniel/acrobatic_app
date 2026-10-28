@@ -1,5 +1,6 @@
 'use client';
 import {useLanguage} from '../lib/i18n';
+import {nativePlatform} from '../lib/native-platform';
 
 import { useEffect, useState } from 'react';
 import { CheckCircle2, Download, Monitor, Share2, Smartphone, WifiOff } from 'lucide-react';
@@ -10,15 +11,17 @@ type InstallEvent = Event & {
 };
 
 export function AppInstall({ visible = true }: { visible?: boolean }) {const {t:tr}=useLanguage();
+  const [native, setNative] = useState<'android'|'ios'|null>(null);
   const [prompt, setPrompt] = useState<InstallEvent | null>(null);
   const [installed, setInstalled] = useState(false);
   const [online, setOnline] = useState(true);
   const [message, setMessage] = useState('');
 
   useEffect(() => {
+    setNative(nativePlatform());
     const display = window.matchMedia('(display-mode: standalone)');
     const sync = () => {
-      setInstalled(display.matches || Boolean((navigator as Navigator & { standalone?: boolean }).standalone));
+      setInstalled(Boolean(nativePlatform()) || display.matches || Boolean((navigator as Navigator & { standalone?: boolean }).standalone));
       setOnline(navigator.onLine);
     };
     const offer = (event: Event) => { event.preventDefault(); setPrompt(event as InstallEvent); };
@@ -55,6 +58,7 @@ export function AppInstall({ visible = true }: { visible?: boolean }) {const {t:
   };
 
   if (!visible) return null;
+  if(native)return <section className="panel app-install"><h2>{tr('아크로바틱 모바일 앱')}</h2><p>{tr('다운로드한 앱으로 실행 중이에요. 같은 KAIST 이메일로 팀 기록을 함께 사용합니다.')}</p><p>{tr('상단 앱 설정에서 오프라인 훈련 가이드와 개인 훈련 알림을 이용하세요.')}</p>{native==='android'&&<a className="btn secondary" href="https://github.com/donghyeok8649daniel/acrobatic_app/releases/latest" target="_blank" rel="noreferrer">{tr('앱 업데이트 다운로드')}</a>}</section>;
   return <section className="panel app-install" aria-labelledby="app-install-title">
     <div className="install-intro">
       <img src="/icons/app-192.png" width="64" height="64" alt={tr("아크로바틱 앱")} />

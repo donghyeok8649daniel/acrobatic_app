@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">아크로바틱</string>
+    <string name="guide">훈련 가이드</string>
+    <string name="more">앱 설정</string>
+    <string name="retry">다시 연결</string>
+    <string name="offline">연결이 끊겼어. 팀 기록은 서버에 보관돼 있어. 훈련 가이드는 오프라인에서도 볼 수 있어.</string>
+    <string name="reminder_title">개인 훈련 알림</string>
+    <string name="reminder_body">월요일 정기훈련은 18:30부터야. 오늘 훈련공지는 앱에서 확인해.</string>
+    <string name="reminder_on">매주 월요일 18:15 개인 알림 켜기 (한국시간)</string>
+    <string name="reminder_off">개인 알림 끄기</string>
+    <string name="reminder_ready">개인 알림을 켰어. 매주 반복되니 휴강 여부는 동아리 공지를 확인해.</string>
+    <string name="reminder_stopped">개인 알림을 껐어.</string>
+    <string name="permission_needed">기기 설정에서 알림을 허용한 뒤 다시 켜줘.</string>
+    <string name="update">앱 업데이트 다운로드</string>
+    <string name="share">동아리 앱 공유</string>
+    <string name="reload">팀 기록 새로고침</string>
+    <string name="close">닫기</string>
+    <string name="leave_title">외부 링크를 열까?</string>
+    <string name="open">열기</string>
+    <string name="select_photo">프로필 사진 선택</string>
+    <string name="external_error">이 링크를 열 수 있는 앱이 없어.</string>
+</resources>
