@@ -9,5 +9,8 @@ declare namespace Cloudflare {
     AUTH_PEPPER?: string;
     SHEET_SYNC_TOKEN?: string;
     SHEET_SYNC_CONFIG?: string;
+    KAKAO_BRIDGE_TOKEN?: string;
+    KAKAO_BRIDGE_TEAM_ID?: string;
+    KAKAO_ROOM_ID?: string;
   }
 }

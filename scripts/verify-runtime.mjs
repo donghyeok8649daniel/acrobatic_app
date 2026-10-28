@@ -15,8 +15,9 @@ const allScripts=['scripts/verify-oct18.mjs','scripts/verify-members.mjs','scrip
 const selectedScripts=process.argv.slice(2);
 const pullTest=selectedScripts.includes('scripts/verify-sheet-pull-api.mjs');
 const fixture=pullTest?pullFixture():null;
+const kakaoTest=selectedScripts.includes('scripts/verify-kakao-api.mjs');
 const emailTest=selectedScripts.includes('scripts/verify-email-sheets.mjs');
-if(selectedScripts.some(script=>!allScripts.includes(script)&&script!=='scripts/verify-email-sheets.mjs'&&script!=='scripts/verify-sheet-pull-api.mjs'))throw Error('Unknown integration test script.');
+if(selectedScripts.some(script=>!allScripts.includes(script)&&script!=='scripts/verify-email-sheets.mjs'&&script!=='scripts/verify-sheet-pull-api.mjs'&&script!=='scripts/verify-kakao-api.mjs'))throw Error('Unknown integration test script.');
 let worker;
 try{
   console.log('Starting isolated local Worker');
@@ -29,8 +30,8 @@ try{
   const moduleFiles=fs.readdirSync(serverRoot,{recursive:true}).filter(v=>/\.(m?js|wasm)$/.test(v)).map(v=>path.join(serverRoot,v));
   const modules=[config.main,...moduleFiles.filter(v=>v!==config.main)].map(file=>({type:file.endsWith('.wasm')?'CompiledWasm':'ESModule',path:file}));
   let pushRequests=0;const pushSigning=emailTest?await crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},true,['sign','verify']):null;const pushPrivate=pushSigning?await crypto.subtle.exportKey('jwk',pushSigning.privateKey):null;
-  const bindings={...config.workerOptions.bindings,AUTH_PEPPER:'local-integration-pepper',...(emailTest?{VAPID_PUBLIC_KEY:Buffer.from(await crypto.subtle.exportKey('raw',pushSigning.publicKey)).toString('base64url'),VAPID_PRIVATE_KEY:pushPrivate.d,VAPID_SUBJECT:'https://club.example',SHEET_SYNC_TOKEN:'test-sync-secret',SHEET_SYNC_CONFIG:JSON.stringify({teamId:'EMAIL-TEST',spreadsheetId:'test-sheet'})}:{}),...(pullTest?{AUTH_PEPPER:'local-integration-pepper',SHEET_SYNC_TOKEN:'test-sync-secret',SHEET_SYNC_CONFIG:JSON.stringify({teamId:'PULL-TEST',spreadsheetId:'test-sheet',pullEnabled:true,tabs:{roster:1,ledger:2,minutes:3,dues:4}})}:{}),TEAM_LOGIN_ALIASES:JSON.stringify({'ADMIN-EXAMPLE':{teamId:'ACRO-ALIAS-TEST',memberId:'m1'}})};
-  const runtime=new Miniflare({host:'127.0.0.1',port:0,cf:false,d1Persist:path.join(state,'v3','d1'),r2Persist:path.join(state,'v3','r2'),workers:[{...config.workerOptions,name:'acrobatic-integration',...(pullTest?{outboundService:async request=>{const url=new URL(request.url);if(url.hostname!=='docs.google.com')throw Error('Unexpected external CSV request');return new Response(fixture.csv[url.searchParams.get('gid')],{headers:{'content-type':'text/csv'}});}}:{}),...(emailTest?{outboundService:async request=>{if(!new URL(request.url).hostname.endsWith('push.apple.com'))throw Error('Unexpected external test request');pushRequests++;return new Response(null,{status:request.url.endsWith('/gone')?410:201});}}:{}),bindings,modules,modulesRoot:serverRoot},...config.externalWorkers]});
+  const bindings={...config.workerOptions.bindings,AUTH_PEPPER:'local-integration-pepper',...(emailTest?{VAPID_PUBLIC_KEY:Buffer.from(await crypto.subtle.exportKey('raw',pushSigning.publicKey)).toString('base64url'),VAPID_PRIVATE_KEY:pushPrivate.d,VAPID_SUBJECT:'https://club.example',SHEET_SYNC_TOKEN:'test-sync-secret',SHEET_SYNC_CONFIG:JSON.stringify({teamId:'EMAIL-TEST',spreadsheetId:'test-sheet'})}:{}),...(pullTest?{AUTH_PEPPER:'local-integration-pepper',SHEET_SYNC_TOKEN:'test-sync-secret',SHEET_SYNC_CONFIG:JSON.stringify({teamId:'PULL-TEST',spreadsheetId:'test-sheet',pullEnabled:true,tabs:{roster:1,ledger:2,minutes:3,dues:4}})}:{}),...(kakaoTest?{KAKAO_BRIDGE_TOKEN:'local-kakao-test-token-with-48-characters-123456789',KAKAO_BRIDGE_TEAM_ID:'KAKAO-TEST',KAKAO_ROOM_ID:'200000000000000001'}:{}),TEAM_LOGIN_ALIASES:JSON.stringify({'ADMIN-EXAMPLE':{teamId:'ACRO-ALIAS-TEST',memberId:'m1'}})};
+  const runtime=new Miniflare({host:'127.0.0.1',port:0,cf:false,d1Persist:path.join(state,'v3','d1'),r2Persist:path.join(state,'v3','r2'),workers:[{...config.workerOptions,r2Buckets:{BUCKET:'isolated-test-videos'},name:'acrobatic-integration',...(pullTest?{outboundService:async request=>{const url=new URL(request.url);if(url.hostname!=='docs.google.com')throw Error('Unexpected external CSV request');return new Response(fixture.csv[url.searchParams.get('gid')],{headers:{'content-type':'text/csv'}});}}:{}),...(emailTest?{outboundService:async request=>{if(!new URL(request.url).hostname.endsWith('push.apple.com'))throw Error('Unexpected external test request');pushRequests++;return new Response(null,{status:request.url.endsWith('/gone')?410:201});}}:{}),bindings,modules,modulesRoot:serverRoot},...config.externalWorkers]});
   worker={stop:()=>runtime.dispose()};
   const origin=(await runtime.ready).origin;
   console.log('Local Worker ready: '+origin);
@@ -56,6 +57,11 @@ try{
    state.sheetLedger=[];state.meetingMinutes=[];state.rollcall=[];
    await database.prepare('INSERT INTO teams(id,state,version) VALUES (?,?,0)').bind('EMAIL-TEST',JSON.stringify(state)).run();
    for(const [email,member,password,must] of [['captain@kaist.ac.kr','m1','20990001',1],['player@kaist.ac.kr','m4','existing-player-password',0]])await database.prepare('INSERT INTO email_accounts(email,team,member,password,must_change,enabled) VALUES (?,?,?,?,?,1)').bind(email,'EMAIL-TEST',member,await passwordHash(password,'local-integration-pepper'),must).run();
+  }
+  if(kakaoTest){
+   const state=initialState('Kakao test','Captain');state.members=[state.members[0],{...state.members[3],id:'m4',name:'Player'}];
+   await database.prepare('INSERT INTO teams(id,state,version) VALUES (?,?,0)').bind('KAKAO-TEST',JSON.stringify(state)).run();
+   for(const [email,member,password] of [['captain@kaist.ac.kr','m1','captain-test-password'],['player@kaist.ac.kr','m4','player-test-password']])await database.prepare('INSERT INTO email_accounts(email,team,member,password,must_change,enabled) VALUES (?,?,?,?,0,1)').bind(email,'KAKAO-TEST',member,await passwordHash(password,'local-integration-pepper')).run();
   }
   let ready=false,stableReads=0;
   for(let i=0;i<12;i++){

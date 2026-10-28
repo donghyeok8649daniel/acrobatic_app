@@ -23,9 +23,27 @@ jobs:
       - run: npm run test:integration
       - run: npm run test:email-sheets
       - run: npm run test:sheet-pull
+      - run: npm run test:kakao
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m unittest discover -s bot -p "test_*.py"
       - uses: actions/upload-artifact@v4
         with:
           name: acrobatic-worker-build
           path: dist/
           include-hidden-files: true
           retention-days: 7
+  bot-container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      APP_ORIGIN: https://club.example
+      KAKAO_BRIDGE_TOKEN: local-container-test-token-not-a-real-credential
+      KAKAO_ROOM_ID: "123456789012345678"
+      IRIS_WEBHOOK_TOKEN: local-container-webhook-not-a-real-credential
+      IRIS_APK_SHA256: "0000000000000000000000000000000000000000000000000000000000000000"
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose -f bot/compose.yaml config --quiet
+      - run: docker compose -f bot/compose.yaml build bridge iris

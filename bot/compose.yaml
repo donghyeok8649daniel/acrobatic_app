@@ -1,0 +1,52 @@
+services:
+  redroid:
+    image: ${REDROID_IMAGE:-redroid/redroid:14.0.0_64only-latest}
+    privileged: true
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:15555:5555"
+    volumes:
+      - android-data:/data
+    command:
+      - androidboot.redroid_gpu_mode=guest
+      - androidboot.use_memfd=true
+    networks: [bot]
+  iris:
+    build:
+      context: .
+      dockerfile: supervisor.Dockerfile
+    restart: unless-stopped
+    environment:
+      IRIS_APK_SHA256: ${IRIS_APK_SHA256:?Verified upstream Iris APK SHA-256 required}
+    volumes:
+      - ./assets:/assets:ro
+    depends_on: [redroid]
+    networks: [bot]
+  bridge:
+    build: .
+    restart: unless-stopped
+    init: true
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    environment:
+      APP_ORIGIN: ${APP_ORIGIN:?App HTTPS origin required}
+      KAKAO_BRIDGE_TOKEN: ${KAKAO_BRIDGE_TOKEN:?Bridge token required}
+      KAKAO_ROOM_ID: ${KAKAO_ROOM_ID:?Room numeric ID required}
+      KAKAO_BOT_ID: ${KAKAO_BOT_ID:-}
+      IRIS_WEBHOOK_TOKEN: ${IRIS_WEBHOOK_TOKEN:?Webhook token required}
+    volumes:
+      - bridge-data:/data
+    depends_on: [iris]
+    networks: [bot]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8790/health',timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+networks:
+  bot:
+volumes:
+  android-data:
+  bridge-data:
