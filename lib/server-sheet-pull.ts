@@ -11,7 +11,7 @@ export async function pullPublicSheet(){const config=JSON.parse(env.SHEET_SYNC_C
    const parsed=csvSnapshot(data,baseline,current);
    // Newly approved app members need a base before the Sheet becomes their
    // metadata source. Unknown Sheet rows only create approval requests.
-   for(const member of current.roster)if(!baseline.roster.some(m=>m.id===member.id))baseline.roster.push(member);
+   for(const member of current.roster)if(parsed.snapshot.roster.some(m=>m.id===member.id)&&!baseline.roster.some(m=>m.id===member.id))baseline.roster.push(member);
    const merged=mergeSnapshots(baseline,current,parsed.snapshot),state=applySnapshot(original,merged);
    const pendingWrites=JSON.stringify(merged)!==JSON.stringify(parsed.snapshot);state.sheetSync={lastSynced:new Date().toISOString(),connected:true,mode:'public-read',pendingWrites};
    const serialized=JSON.stringify(state);if(serialized.length>750000)throw Error('팀 기록 용량을 초과했습니다.');const saved=await database().prepare('UPDATE teams SET state=?,version=version+1 WHERE id=? AND version=?').bind(serialized,config.teamId,row.version).run();if(!saved.meta.changes)continue;

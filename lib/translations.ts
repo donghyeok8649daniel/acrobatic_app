@@ -858,3 +858,5 @@ export function translate(text:string,language:Language):string{
  if(text.includes(' · ')||text.includes(' / ')||/^부 /.test(text))return text.split(/( · | \/ | → |, |부 )/).map(part=>part==='부 '?'Secondary ':Object.hasOwn(english,part)?english[part]:part).join('');
  return text;
 }
+
+Object.assign(english,{'학부 부원 명단에 포함':'Include in the undergraduate member list','Google 시트에는 별도로 추가해주세요. 앱에서 승인한 부원은 시트에 없어도 유지됩니다.':'Add the member to Google Sheets separately. Approved app members remain even if they are absent from the sheet.'});

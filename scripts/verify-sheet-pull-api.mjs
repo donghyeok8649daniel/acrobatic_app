@@ -5,7 +5,7 @@ assert.equal((await fetch(origin+'/api/sheets/pull',{method:'POST'})).status,401
 let r=await pull();assert.equal(r.status,200);assert.equal((await r.json()).pendingApplicants,1);
 const login=await fetch(origin+'/api/team',{method:'POST',headers:{origin,'content-type':'application/json'},body:JSON.stringify({action:'loginEmail',payload:{email:'captain@kaist.ac.kr',password:'existing-test-password'}})});assert.equal(login.status,200);const cookie=login.headers.get('set-cookie').split(';')[0];
 const get=async()=>{const r=await fetch(origin+'/api/team',{headers:{cookie}});assert.equal(r.status,200);return (await r.json()).state;};
-const state=await get();assert.equal(state.members.length,2);assert.equal(state.sheetLedger.length,2);assert.equal(state.sheetLedger.find(r=>r.id==='l1').amount,-2000);assert.equal(state.transactions.reduce((n,r)=>n+r.amount,0),-2500);
+const state=await get();assert.equal(state.members.length,3);assert.ok(state.members.some(m=>m.id==='approved'));assert.equal(state.sheetLedger.length,2);assert.equal(state.sheetLedger.find(r=>r.id==='l1').amount,-2000);assert.equal(state.transactions.reduce((n,r)=>n+r.amount,0),-2500);
 assert.equal(state.meetingMinutes.length,2);assert.ok(state.meetingMinutes.some(r=>r.id==='app-note'));assert.equal(state.sheetSync.mode,'public-read');assert.equal(state.sheetSync.connected,true);assert.equal(state.sheetSync.pendingWrites,true);assert.equal(state.duesRecords[0].confirmed,true);
 assert.equal((await pull()).status,200);const again=await get();assert.deepEqual(again.sheetLedger,state.sheetLedger);assert.deepEqual(again.meetingMinutes,state.meetingMinutes);
 const pending=await fetch(origin+'/api/membership',{headers:{cookie}});assert.equal((await pending.json()).requests.length,1);
