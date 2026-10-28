@@ -15,13 +15,15 @@ Android APK와 iOS 앱 프로젝트다. 두 앱은 동일한 HTTPS 서버에 연
 
 macOS와 Xcode에서 `brew install xcodegen` 후 `cd mobile/ios && xcodegen generate`를 실행하고 생성된 `Acrobatic.xcodeproj`를 연다. iOS 16 이상을 대상으로 한다. CI는 iPhone 시뮬레이터 검사와 서명 없는 기기용 컴파일을 수행한다.
 
-**iOS 소스 ZIP과 서명 없는 아카이브는 아이폰에 설치하는 파일이 아니다.** TestFlight/App Store 배포에는 Apple Developer Program 가입, 개인 계정의 배포 인증서·프로비저닝 프로파일과 App Store Connect 앱 등록이 필요하다. 현재는 배포 자격과 서명이 연결되지 않았다. 가입이나 결제를 자동으로 진행하지 않는다. 가입 후 Xcode의 Signing & Capabilities에서 개인 Team을 지정하고, 고유 bundle ID를 확인한 뒤 Product → Archive → Distribute App → App Store Connect로 업로드한다. Apple 처리와 필요한 심사가 끝나면 실제 TestFlight 초대 링크를 공유한다.
+**무료 설치:** 릴리스의 `Acrobatic-iOS-resign-*.ipa`를 Sideloadly 또는 SideStore에서 각자의 무료 Apple ID로 재서명해 설치할 수 있다. 7일마다 갱신해야 한다. 처음에는 컴퓨터 연결과 기기 신뢰·개발자 모드 설정이 필요하다. [무료 설치 안내](SIDELOAD.md)를 따른다. IPA를 Safari에서 눌러 바로 설치할 수 있는 것은 아니다. iOS 소스 ZIP은 개발용 소스다.
+
+TestFlight/App Store를 통한 배포는 Apple Developer Program과 배포 인증서·프로비저닝, App Store Connect 등록이 별도로 필요하며 현재는 연결되지 않았다. 가입이나 결제를 자동으로 진행하지 않는다.
 
 ## 알림과 업데이트
 
 앱 설정의 **개인 훈련 알림**은 매주 월요일 18:15(한국시간)에 반복한다. 사용자가 직접 허용·활성화하며 해제할 수 있다. Android는 절전 정책에 따라 알림 시간이 지연될 수 있다. 휴강 여부는 앱 공지를 확인한다. 이 알림은 새 공지를 서버에서 받는 푸시와 구분한다. 네이티브 원격 푸시는 FCM/APNs 설정이 연결되지 않아 제공하지 않는다.
 
-팀 화면 변경은 공통 서버에서 반영된다. Android 실행 파일 업데이트는 앱 설정의 GitHub 릴리스 링크에서 새 APK를 받는다. iOS 바이너리 업데이트는 배포 연결 후 TestFlight/App Store로 제공한다.
+팀 화면 변경은 공통 서버에서 반영된다. Android 실행 파일 업데이트는 앱 설정의 GitHub 릴리스 링크에서 새 APK를 받는다. iOS 바이너리 업데이트는 새 IPA를 같은 개인 Apple ID로 재서명해 설치한다. TestFlight/App Store는 배포 연결 후 이용할 수 있다.
 
 ## 검사
 

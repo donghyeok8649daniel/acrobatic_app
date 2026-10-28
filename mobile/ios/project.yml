@@ -6,8 +6,8 @@ options:
 settings:
   base:
     SWIFT_VERSION: '5.0'
-    MARKETING_VERSION: '0.3.2'
-    CURRENT_PROJECT_VERSION: '5'
+    MARKETING_VERSION: '0.3.3'
+    CURRENT_PROJECT_VERSION: '6'
     TARGETED_DEVICE_FAMILY: '1,2'
 targets:
   Acrobatic:
@@ -26,8 +26,8 @@ targets:
       path: Acrobatic/Info.plist
       properties:
         CFBundleDisplayName: Acrobatic
-        CFBundleShortVersionString: '0.3.2'
-        CFBundleVersion: '5'
+        CFBundleShortVersionString: '0.3.3'
+        CFBundleVersion: '6'
         UILaunchScreen: {}
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false

@@ -1,6 +1,6 @@
 # KAIST Acrobatic
 
-KAIST 족구동아리 아크로바틱의 전용 운영 앱이다. 한국어와 영어를 지원하며, Cloudflare Workers와 D1을 공통 서버로 사용한다. 갤럭시·Android용 서명 APK와 iOS 앱 프로젝트, Windows EXE를 제공한다. 아이폰 설치 배포는 Apple Developer 서명 연결 전이라 아직 사용할 수 없다. 브라우저에서도 같은 팀 서버를 이용할 수 있다. 모바일 빌드·검증과 배포 상태는 [mobile/README.md](mobile/README.md)에 정리했다.
+KAIST 족구동아리 아크로바틱의 전용 운영 앱이다. 한국어와 영어를 지원하며, Cloudflare Workers와 D1을 공통 서버로 사용한다. 갤럭시·Android용 서명 APK와 iOS 앱 프로젝트, Windows EXE를 제공한다. 아이폰은 무료 Apple ID로 IPA를 재서명해 설치할 수 있으며 7일마다 갱신해야 한다. 브라우저에서도 같은 팀 서버를 이용할 수 있다. 모바일 빌드·검증과 배포 상태는 [mobile/README.md](mobile/README.md)에 정리했다.
 
 ## 주요 기능
 
@@ -53,7 +53,7 @@ npm run deploy:cloudflare
 
 ## 휴대폰 설치와 알림
 
-Android 설치 파일은 GitHub의 `mobile-v*` 릴리스에서 받는다. iOS 소스 ZIP은 설치 파일이 아니며 TestFlight 배포 연결이 필요하다. 다운로드 앱의 개인 반복 알림과 브라우저 웹푸시는 별개다. 네이티브 원격 푸시는 아직 연결되지 않았다. 아래는 선택 가능한 브라우저 웹 앱 설치 방법이다.
+Android 설치 파일은 GitHub의 `mobile-v*` 릴리스에서 받는다. 아이폰 IPA는 Sideloadly·SideStore에서 각자의 무료 Apple ID로 재서명해 설치한다. 7일마다 갱신이 필요하다. [무료 설치 안내](mobile/SIDELOAD.md)를 참고한다. iOS 소스 ZIP은 개발용 소스다. 다운로드 앱의 개인 반복 알림과 브라우저 웹푸시는 별개다. 네이티브 원격 푸시는 아직 연결되지 않았다. 아래는 선택 가능한 브라우저 웹 앱 설치 방법이다.
 
 - 갤럭시: Chrome에서 앱 설치 또는 홈 화면에 추가
 - 아이폰: Safari에서 공유 → 홈 화면에 추가
@@ -65,6 +65,8 @@ Android 설치 파일은 GitHub의 `mobile-v*` 릴리스에서 받는다. iOS �
 
 ## 카카오톡과 후속 기능
 
-일반 단톡방의 카카오 기본 투표를 생성·조회·수정하는 연동은 현재 포함하지 않는다. 조사한 오픈소스는 `storycraft/node-kakao`, `dolidolih/Iris`, `JungHoonGhae/openkakao-cli`이며, 네이티브 투표 양방향 동기화를 검증하지 못했다. Iris는 상시 안드로이드 중계기가 필요하다. 앱의 참석 투표 링크와 당일 매뉴얼은 공유할 수 있다.
+일반 단톡방의 카카오 기본 투표를 생성·조회·수정하는 연동은 현재 포함하지 않는다. [카카오 답변(2026-09-02)](https://devtalk.kakao.com/t/topic/104699)에서도 관련 기능은 미제공으로 안내한다. [그룹 챗봇 공식 경로](https://with.kakao.com/proposition?page=chatbot&type=service)는 제휴 검토가 필요하며, 현재 아크로바틱 봇은 연결되지 않았다.
+
+조사한 오픈소스는 `storycraft/node-kakao`, `dolidolih/Iris`, `JungHoonGhae/openkakao-cli`, `yudh0802/whenwecan`이다. `whenwecan`은 AI가 웹 투표를 만든 뒤 단톡에 링크를 공유하는 구조다. 카카오 기본 투표와의 양방향 동기화는 검증하지 못했다. Iris는 상시 안드로이드 중계기가 필요하다. 현재 앱의 참석 투표 링크와 당일 매뉴얼은 공유할 수 있다.
 
 영수증 첨부, 실제 훈련 출석부, 친목조 점수는 후속 버전 범위다. 현재는 참석 예정 투표와 친목조 구성만 제공한다.
