@@ -48,7 +48,7 @@ struct ClubView: View {
             .sheet(isPresented: $settings) {
                 NavigationStack {
                     List {
-                        Section("Acrobatic 0.3.0") {
+                        Section("Acrobatic 0.3.1") {
                             Button(text("팀 기록 새로고침", "Refresh team records")) { browser.reload(); settings = false }
                             Button(text("훈련 가이드", "Training guide")) { settings = false; DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { guide = true } }
                             ShareLink(item: AppPolicy.home) { Label(text("동아리 앱 공유", "Share club app"), systemImage: "square.and.arrow.up") }

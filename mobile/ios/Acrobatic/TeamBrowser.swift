@@ -11,7 +11,7 @@ final class TeamBrowser: NSObject, ObservableObject, WKNavigationDelegate, WKUID
     override init() {
         let config = WKWebViewConfiguration()
         config.websiteDataStore = .default()
-        config.applicationNameForUserAgent = "AcrobaticIOS/0.3.0"
+        config.applicationNameForUserAgent = "AcrobaticIOS/0.3.1"
         config.mediaTypesRequiringUserActionForPlayback = .all
         webView = WKWebView(frame: .zero, configuration: config)
         super.init()
