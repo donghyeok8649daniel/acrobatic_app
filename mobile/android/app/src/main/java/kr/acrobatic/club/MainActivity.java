@@ -11,8 +11,10 @@ import android.view.*;
 import android.webkit.*;
 import android.widget.*;
 import java.nio.charset.StandardCharsets;
+import androidx.activity.ComponentActivity;
+import androidx.activity.OnBackPressedCallback;
 
-public final class MainActivity extends Activity {
+public final class MainActivity extends ComponentActivity {
     private WebView team,guide;
     private LinearLayout error;
     private ProgressBar progress;
@@ -51,7 +53,7 @@ public final class MainActivity extends Activity {
             @Override public boolean onJsConfirm(WebView view,String url,String message,JsResult result){new AlertDialog.Builder(MainActivity.this).setMessage(message).setPositiveButton(android.R.string.ok,(d,w)->result.confirm()).setNegativeButton(android.R.string.cancel,(d,w)->result.cancel()).setOnCancelListener(d->result.cancel()).show();return true;}
         });
         team.setDownloadListener((url,ua,disposition,mime,size)->openExternal(url));
-        setContentView(root);if(Build.VERSION.SDK_INT>=33)getOnBackInvokedDispatcher().registerOnBackInvokedCallback(android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT,this::back);
+        setContentView(root);getOnBackPressedDispatcher().addCallback(this,new OnBackPressedCallback(true){@Override public void handleOnBackPressed(){back();}});
         if(state==null||team.restoreState(state)==null)team.loadUrl(AppPolicy.APP_URL);
     }
     @android.annotation.SuppressLint("SetJavaScriptEnabled")
@@ -67,7 +69,6 @@ public final class MainActivity extends Activity {
     private void openExternal(String url){if(!AppPolicy.isExternalUrl(url))return;new AlertDialog.Builder(this).setTitle(R.string.leave_title).setMessage(Uri.parse(url).getHost()).setPositiveButton(R.string.open,(d,w)->{try{startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(url)));}catch(ActivityNotFoundException e){toast(R.string.external_error);}}).setNegativeButton(android.R.string.cancel,null).show();}
     private void toast(int string){Toast.makeText(this,string,Toast.LENGTH_LONG).show();}
     private void back(){if(showingGuide){closeGuide();return;}if(team.canGoBack())team.goBack();else finish();}
-    @Override public void onBackPressed(){back();}
     @Override protected void onSaveInstanceState(Bundle state){team.saveState(state);super.onSaveInstanceState(state);}
     @Override protected void onPause(){super.onPause();team.onPause();CookieManager.getInstance().flush();}
     @Override protected void onResume(){super.onResume();if(team!=null)team.onResume();}

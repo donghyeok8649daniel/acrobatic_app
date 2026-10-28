@@ -64,13 +64,17 @@ export function AppInstall({ visible = true }: { visible?: boolean }) {const {t:
       <img src="/icons/app-192.png" width="64" height="64" alt={tr("아크로바틱 앱")} />
       <div><span className="eyebrow">ACROBATIC, EVERYWHERE</span><h2 id="app-install-title">{tr("아크로바틱 앱 설치")}</h2><p>{tr("갤럭시와 아이폰, 컴퓨터에서 같은 KAIST 이메일로 사용하세요.")}</p></div>
     </div>
-    {tr(installed ? <div className="install-status"><CheckCircle2 size={19}/>{tr("앱으로 실행 중이에요.")}</div> : prompt ? <button className="btn primary" onClick={install}><Download size={18}/>{tr("아크로바틱 앱 설치")}</button> : <p className="soft-note">{tr("아래 방법으로 설치하세요. 브라우저에 따라 ‘앱 설치’ 또는 ‘홈 화면에 추가’로 표시됩니다.")}</p>)}
+    <div className="binary-downloads"><a className="btn primary" href="https://github.com/donghyeok8649daniel/acrobatic_app/releases/download/mobile-v0.3.0/Acrobatic-Android-0.3.0.apk"><Download size={18}/>{tr('갤럭시 · Android APK 다운로드')}</a><a className="btn secondary" href="https://github.com/donghyeok8649daniel/acrobatic_app/releases/download/desktop-v0.2.0/Acrobatic-Setup-0.2.0-x64.exe"><Monitor size={18}/>{tr('Windows EXE 다운로드')}</a></div>
+    <p className="soft-note">{tr('아이폰 설치 앱은 Apple Developer 배포 서명 연결 후 TestFlight로 제공할 예정이에요. 현재 설치 링크는 없어요.')}</p>
+    <details className="browser-install"><summary>{tr('브라우저 홈 화면 설치 안내')}</summary>
+    {tr(installed ? <div className="install-status"><CheckCircle2 size={19}/>{tr("앱으로 실행 중이에요.")}</div> : prompt ? <button className="btn primary" onClick={install}><Download size={18}/>{tr("브라우저 웹앱 설치")}</button> : <p className="soft-note">{tr("아래 방법으로 설치하세요. 브라우저에 따라 ‘앱 설치’ 또는 ‘홈 화면에 추가’로 표시됩니다.")}</p>)}
     <div className="install-methods">
       <article><Monitor size={23}/><h3>{tr("컴퓨터")}</h3><p>{tr("Chrome·Edge에서 사이트를 열고 주소창의 설치 아이콘 또는 메뉴의 ‘앱 설치’를 선택하세요.")}</p></article>
       <article><Smartphone size={23}/><h3>{tr("안드로이드")}</h3><p>{tr("Chrome에서 사이트를 열고 ⋮ 메뉴 → ‘앱 설치’ 또는 ‘홈 화면에 추가’를 선택하세요.")}</p></article>
       <article><Share2 size={23}/><h3>{tr("아이폰 · 아이패드")}</h3><p>{tr("Safari에서 사이트를 열고 공유 → ‘홈 화면에 추가’를 선택하세요. ‘웹 앱으로 열기’가 보이면 켜주세요.")}</p></article>
     </div>
-    <p className="install-footnote">{tr("출석·장부·영상은 인터넷에 연결했을 때 팀원들과 공유됩니다. 설치한 기기에서도 KAIST 이메일과 비밀번호로 로그인해주세요.")}</p>
+    <p className="install-footnote">{tr("훈련·명단·장부는 인터넷에 연결했을 때 팀원들과 공유됩니다. 설치한 기기에서도 KAIST 이메일과 비밀번호로 로그인해주세요.")}</p>
+    </details>
     {!online && <p className="install-status"><WifiOff size={18}/>{tr("연결이 끊겼어요. 인터넷 연결 후 다시 이용해주세요.")}</p>}
     {message && <p role="status" className="install-status">{tr(message)}</p>}
   </section>;

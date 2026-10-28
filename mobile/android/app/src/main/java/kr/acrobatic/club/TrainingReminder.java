@@ -26,7 +26,7 @@ public final class TrainingReminder extends BroadcastReceiver {
         manager.createNotificationChannel(new NotificationChannel(CHANNEL,context.getString(R.string.reminder_title),NotificationManager.IMPORTANCE_DEFAULT));
         if(Build.VERSION.SDK_INT<33||context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)==PackageManager.PERMISSION_GRANTED){
             PendingIntent open=PendingIntent.getActivity(context,2,new Intent(context,MainActivity.class),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
-            manager.notify(1,new Notification.Builder(context,CHANNEL).setSmallIcon(R.drawable.app_icon).setContentTitle(context.getString(R.string.reminder_title)).setContentText(context.getString(R.string.reminder_body)).setStyle(new Notification.BigTextStyle().bigText(context.getString(R.string.reminder_body))).setContentIntent(open).setAutoCancel(true).build());
+            manager.notify(1,new Notification.Builder(context,CHANNEL).setSmallIcon(R.drawable.ic_training).setContentTitle(context.getString(R.string.reminder_title)).setContentText(context.getString(R.string.reminder_body)).setStyle(new Notification.BigTextStyle().bigText(context.getString(R.string.reminder_body))).setContentIntent(open).setAutoCancel(true).build());
         }
         schedule(context);
     }
