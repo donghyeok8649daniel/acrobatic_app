@@ -819,6 +819,16 @@ KAIST 이메일|KAIST email
 수비 친목조|Defense group
 명단 · 동비 사용 · 회비 납부 · 회의록 자동 연동|Automatic sync for members, finances, dues and minutes
 부원 대신 가입 신청|Submit an application for a member
+앱 메뉴|App menu
+홈|Home
+동비|Finances
+부원|Members
+더보기|More
+시트에서 수정한 명단·지출·회비·회의록을 서버가 5분마다 읽어 반영합니다.|The server reads changes to members, expenses, dues and minutes from the spreadsheet every 5 minutes.
+앱에서 입력한 기록은 공동 서버에 저장됩니다. 구글 시트로 자동 쓰기는 별도 연결 전까지 사용하지 않습니다.|App entries are saved on the shared server. Automatic writes to Google Sheets need a separate connection.
+앱에만 저장된 변경 사항이 있습니다.|Some changes are saved only in the app.
+지금 시트 반영|Sync from spreadsheet now
+반영 중…|Syncing…
 `;
 export const english:Readonly<Record<string,string>>=Object.fromEntries(entries.trim().split('\n').map(row=>{const index=row.indexOf('|');return [row.slice(0,index),row.slice(index+1)];}));
 

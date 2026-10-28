@@ -13,9 +13,10 @@
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
     "typecheck": "tsc --noEmit",
-    "test:unit": "node scripts/verify-pwa.mjs && node scripts/verify-positions.mjs && node scripts/verify-members-unit.mjs && node scripts/verify-i18n.mjs && node scripts/verify-match-ui.mjs && node scripts/verify-login-alias.mjs && node scripts/verify-sheet-sync.mjs && node scripts/verify-push.mjs",
+    "test:unit": "node scripts/verify-pwa.mjs && node scripts/verify-positions.mjs && node scripts/verify-members-unit.mjs && node scripts/verify-i18n.mjs && node scripts/verify-match-ui.mjs && node scripts/verify-login-alias.mjs && node scripts/verify-sheet-sync.mjs && node scripts/verify-sheet-csv.mjs && node scripts/verify-push.mjs",
     "test:integration": "node scripts/verify-runtime.mjs",
     "deploy:cloudflare": "node scripts/deploy-cloudflare.mjs",
+    "test:sheet-pull": "node scripts/verify-runtime.mjs scripts/verify-sheet-pull-api.mjs",
     "test:email-sheets": "node scripts/verify-runtime.mjs scripts/verify-email-sheets.mjs"
   },
   "dependencies": {

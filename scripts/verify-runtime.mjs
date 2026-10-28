@@ -1,4 +1,5 @@
 import './sites-env.mjs';
+import {pullFixture} from './sheet-pull-fixture.mjs';
 import {spawn} from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -12,8 +13,10 @@ fs.mkdirSync(state,{recursive:true});
 const env={...process.env,WRANGLER_SEND_METRICS:'false',WRANGLER_WRITE_LOGS:'false',CLOUDFLARE_CF_FETCH_ENABLED:'false'};
 const allScripts=['scripts/verify-oct18.mjs','scripts/verify-members.mjs','scripts/verify-member-lifecycle.mjs','scripts/verify-login-alias-api.mjs'];
 const selectedScripts=process.argv.slice(2);
+const pullTest=selectedScripts.includes('scripts/verify-sheet-pull-api.mjs');
+const fixture=pullTest?pullFixture():null;
 const emailTest=selectedScripts.includes('scripts/verify-email-sheets.mjs');
-if(selectedScripts.some(script=>!allScripts.includes(script)&&script!=='scripts/verify-email-sheets.mjs'))throw Error('Unknown integration test script.');
+if(selectedScripts.some(script=>!allScripts.includes(script)&&script!=='scripts/verify-email-sheets.mjs'&&script!=='scripts/verify-sheet-pull-api.mjs'))throw Error('Unknown integration test script.');
 let worker;
 try{
   console.log('Starting isolated local Worker');
@@ -26,8 +29,8 @@ try{
   const moduleFiles=fs.readdirSync(serverRoot,{recursive:true}).filter(v=>/\.(m?js|wasm)$/.test(v)).map(v=>path.join(serverRoot,v));
   const modules=[config.main,...moduleFiles.filter(v=>v!==config.main)].map(file=>({type:file.endsWith('.wasm')?'CompiledWasm':'ESModule',path:file}));
   let pushRequests=0;const pushSigning=emailTest?await crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},true,['sign','verify']):null;const pushPrivate=pushSigning?await crypto.subtle.exportKey('jwk',pushSigning.privateKey):null;
-  const bindings={...config.workerOptions.bindings,AUTH_PEPPER:'local-integration-pepper',...(emailTest?{VAPID_PUBLIC_KEY:Buffer.from(await crypto.subtle.exportKey('raw',pushSigning.publicKey)).toString('base64url'),VAPID_PRIVATE_KEY:pushPrivate.d,VAPID_SUBJECT:'https://club.example',SHEET_SYNC_TOKEN:'test-sync-secret',SHEET_SYNC_CONFIG:JSON.stringify({teamId:'EMAIL-TEST',spreadsheetId:'test-sheet'})}:{}),TEAM_LOGIN_ALIASES:JSON.stringify({'ADMIN-EXAMPLE':{teamId:'ACRO-ALIAS-TEST',memberId:'m1'}})};
-  const runtime=new Miniflare({host:'127.0.0.1',port:0,cf:false,d1Persist:path.join(state,'v3','d1'),r2Persist:path.join(state,'v3','r2'),workers:[{...config.workerOptions,name:'acrobatic-integration',...(emailTest?{outboundService:async request=>{if(!new URL(request.url).hostname.endsWith('push.apple.com'))throw Error('Unexpected external test request');pushRequests++;return new Response(null,{status:request.url.endsWith('/gone')?410:201});}}:{}),bindings,modules,modulesRoot:serverRoot},...config.externalWorkers]});
+  const bindings={...config.workerOptions.bindings,AUTH_PEPPER:'local-integration-pepper',...(emailTest?{VAPID_PUBLIC_KEY:Buffer.from(await crypto.subtle.exportKey('raw',pushSigning.publicKey)).toString('base64url'),VAPID_PRIVATE_KEY:pushPrivate.d,VAPID_SUBJECT:'https://club.example',SHEET_SYNC_TOKEN:'test-sync-secret',SHEET_SYNC_CONFIG:JSON.stringify({teamId:'EMAIL-TEST',spreadsheetId:'test-sheet'})}:{}),...(pullTest?{AUTH_PEPPER:'local-integration-pepper',SHEET_SYNC_TOKEN:'test-sync-secret',SHEET_SYNC_CONFIG:JSON.stringify({teamId:'PULL-TEST',spreadsheetId:'test-sheet',pullEnabled:true,tabs:{roster:1,ledger:2,minutes:3,dues:4}})}:{}),TEAM_LOGIN_ALIASES:JSON.stringify({'ADMIN-EXAMPLE':{teamId:'ACRO-ALIAS-TEST',memberId:'m1'}})};
+  const runtime=new Miniflare({host:'127.0.0.1',port:0,cf:false,d1Persist:path.join(state,'v3','d1'),r2Persist:path.join(state,'v3','r2'),workers:[{...config.workerOptions,name:'acrobatic-integration',...(pullTest?{outboundService:async request=>{const url=new URL(request.url);if(url.hostname!=='docs.google.com')throw Error('Unexpected external CSV request');return new Response(fixture.csv[url.searchParams.get('gid')],{headers:{'content-type':'text/csv'}});}}:{}),...(emailTest?{outboundService:async request=>{if(!new URL(request.url).hostname.endsWith('push.apple.com'))throw Error('Unexpected external test request');pushRequests++;return new Response(null,{status:request.url.endsWith('/gone')?410:201});}}:{}),bindings,modules,modulesRoot:serverRoot},...config.externalWorkers]});
   worker={stop:()=>runtime.dispose()};
   const origin=(await runtime.ready).origin;
   console.log('Local Worker ready: '+origin);
@@ -41,6 +44,11 @@ try{
   for(const [member,code] of [['m1','TESTALIASCAPTAIN'],['m4','TESTALIASPLAYER']]){
    const hash=Buffer.from(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(aliasTeam+':'+code))).toString('hex');
    await database.prepare('INSERT INTO credentials(id,team,member,hash) VALUES (?,?,?,?)').bind('alias-'+member,aliasTeam,member,hash).run();
+  }
+  if(pullTest){
+   await database.prepare('INSERT INTO teams(id,state,version) VALUES (?,?,0)').bind('PULL-TEST',JSON.stringify(fixture.state)).run();
+   await database.prepare('INSERT INTO sheet_links(team,baseline) VALUES (?,?)').bind('PULL-TEST',JSON.stringify(fixture.baseline)).run();
+   for(const m of fixture.state.members)await database.prepare('INSERT INTO email_accounts(email,team,member,password,must_change,enabled) VALUES (?,?,?,?,0,1)').bind(m.sheetProfile.email,'PULL-TEST',m.id,await passwordHash('existing-test-password','local-integration-pepper')).run();
   }
   if(emailTest){
    const state=initialState('Email test','Captain');state.members=[state.members[0],{...state.members[3],id:'m4',name:'Player'}];
